@@ -1,35 +1,15 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Seadog HPC Storm Surge</title>
-<body>
-<h1>Ransom Consulting Seadog HPC Storm Surge Forecast</h1>
-<p>This map inlay can contain the maxele.63 data, tiled into overlays. This can be drawn over the bing maps inlay.</p>
-</body>
-        <div id="myMap" style="position:relative;width:100vw;height:600px;"></div>
-        <script type='text/javascript'>
-            function loadMapScenario() {
-                var map = new Microsoft.Maps.Map(document.getElementById('myMap'), {
-                    /* No need to set credentials if already passed in URL */
-                    center: new Microsoft.Maps.Location(43.25, -70),
-                    zoom: 10,
-					minZoom:10,
-					maxZoom:13,
-                    mapTypeId: Microsoft.Maps.MapTypeId.aerial
-                });
-                // tiles of Southern maine ADCIRC model Bathymetry
-                var katrinaTileSource = new Microsoft.Maps.TileSource({
-                    uriConstructor: '../FILES/belv/im_{quadkey}.png',
-                    minZoom: 3,
-                    maxZoom: 15
-					});
-                var BathyTileLayer = new Microsoft.Maps.TileLayer({
-                    mercator: katrinaTileSource,
-                });
-                map.layers.insert(BathyTileLayer);
-                
-            }
-        </script>
-        <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?key=AsMcLKtSFhqwPFFudGxrP3bLu_hQ5to6BNoDm98hYbCpsYe4q1SSyYd9vXpk9R_e&callback=loadMapScenario' async defer></script>
-    </body>
-</html>
+#!/usr/local/bin/perl
+# hello.pl - My first CGI program
+
+print "Content-Type: text/html\n\n";
+# Note there is a newline between 
+# this header and Data
+
+# Simple HTML code follows
+
+print "<html> <head>\n";
+print "<title>Hello, world!</title>";
+print "</head>\n";
+print "<body>\n";
+print "<h1>Hello, world!</h1>\n";
+print "</body> </html>\n";
