@@ -2,34 +2,76 @@
 <html>
 <head>
 <title>Seadog HPC Storm Surge</title>
-<body>
-<h1>Ransom Consulting Seadog HPC Storm Surge Forecast</h1>
-<p>This map inlay can contain the maxele.63 data, tiled into overlays. This can be drawn over the bing maps inlay.</p>
-</body>
-        <div id="myMap" style="position:relative;width:100vw;height:600px;"></div>
-        <script type='text/javascript'>
-            function loadMapScenario() {
-                var map = new Microsoft.Maps.Map(document.getElementById('myMap'), {
-                    /* No need to set credentials if already passed in URL */
-                    center: new Microsoft.Maps.Location(43.25, -70),
-                    zoom: 10,
-					minZoom:10,
-					maxZoom:13,
-                    mapTypeId: Microsoft.Maps.MapTypeId.aerial
-                });
-                // tiles of Southern maine ADCIRC model Bathymetry
-                var katrinaTileSource = new Microsoft.Maps.TileSource({
-                    uriConstructor: 'FILES/belv/im_{quadkey}.png',
-                    minZoom: 3,
-                    maxZoom: 15
-					});
-                var BathyTileLayer = new Microsoft.Maps.TileLayer({
-                    mercator: katrinaTileSource,
-                });
-                map.layers.insert(BathyTileLayer);
-                
+	<script type='text/javascript'>
+    var map, animatedLayer;
+    var timestamps = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20','31', '32', '33', '34', '35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46', '47', '48', '49', '50', '51', '52', '53', '54', '55', '56', '57', '58', '59'];
+	var urlTemplate1= '../Grayson/FILES/wlev';
+	var urlTemplate2= '/im_{quadkey}.png';
+
+	var displayMessages = [];
+
+    function GetMap()
+    {
+        map = new Microsoft.Maps.Map('#myMap', {
+			center: new Microsoft.Maps.Location(43.25, -70),
+            zoom: 10
+        });
+
+        var tileSources = [];
+
+        //Create a tile source for each time stamp.
+        for (var i = 0; i < timestamps.length; i++) {
+            var tSource = new Microsoft.Maps.TileSource({
+                uriConstructor: urlTemplate1.concat(timestamps[i],urlTemplate2),
+				maxZoom: 14
+            });
+            tileSources.push(tSource);
+
+            //Create a message to display for each frame of the animation based on the time stamp.
+            var msg = 'Current';
+
+            if (timestamps[i] != '900913') {
+                msg += ' -' + timestamps[i].replace('900913-m', '') + 'in';
             }
-        </script>
-        <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?key=AsMcLKtSFhqwPFFudGxrP3bLu_hQ5to6BNoDm98hYbCpsYe4q1SSyYd9vXpk9R_e&callback=loadMapScenario' async defer></script>
-    </body>
+
+            displayMessages.push(msg);
+        }
+
+        //Create the animated tile layer and add it to the map.
+        animatedLayer = new Microsoft.Maps.AnimatedTileLayer({
+            mercator: tileSources,
+            frameRate: 500
+        });
+
+        //Add an event handler that fires for each frame of the animation.
+        Microsoft.Maps.Events.addHandler(animatedLayer, 'onFrameLoaded', function (e) {
+            var msg = displayMessages[e.index];
+            document.getElementById('messagePanel').innerText = msg;
+        });
+
+        map.layers.insert(animatedLayer);
+    }
+    </script>
+    <style>
+        #messagePanel{
+            position:absolute;
+            top:20px;
+            left:20px;
+            background-color:white;
+            padding:2px;
+            border-radius:15px;
+            width:110px;
+            text-align:center;
+        }
+    </style>
+    <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AsMcLKtSFhqwPFFudGxrP3bLu_hQ5to6BNoDm98hYbCpsYe4q1SSyYd9vXpk9R_e' async defer></script>
+</head>
+<body>
+	<h1>Ransom Consulting Seadog HPC Storm Surge Forecast</h1>
+	<p>This map inlay can contain the maxele.63 data, tiled into overlays. This can be drawn over the bing maps inlay.</p>
+</body>
+<body>
+    <div id="myMap" style="position:relative;width:100vw;height:600px;"></div>
+    <div id="messagePanel"></div>
+</body>
 </html>
